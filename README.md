@@ -1,9 +1,19 @@
 # SharpGmailC2
+
 Our Friendly Gmail will act as Server and implant will exfiltrate data via smtp and will read commands from C2 (Gmail) via imap protocol
 
 ### Used:
+
 1. `EAGetMail` library from Nuget Package Manager.
-2. `Costura` and `Costura Fody` from Nuget Package Manager, in order to bundle up all the dlls altogether.
+2. `Costura` and `Costura Fody` from Nuget Package Manager, in order to bundle up all the dlls altogether. This actually bulked up my implant, but for this case, I don't think that will matter much as this implant is FUD till now :).
+
+### Precausions to be taken by Operator before Using Gmail as C2:
+
+1. Make sure the Command sent via Gmail, is in `Unread` Mode (if not, mark as Unread) as the implant scans the `Last/latest Unread` mail and checks whether it starts with "`in:`" or not. If it does start with "`in:`", it understands that, that particular textbody is a legit command, and marks that particular mail as `Read` and this continues till the end.
+
+Here is the snippet:
+
+![latest_unreadMail](https://github.com/reveng007/SharpGmailC2/blob/main/img/latest_unreadMail.PNG)
 
 ### C2 In-Action:
 
