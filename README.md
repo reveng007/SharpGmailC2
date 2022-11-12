@@ -28,3 +28,9 @@ https://user-images.githubusercontent.com/61424547/201413790-aa4c9948-d909-45d0-
 2. Using [Antiscan.me](https://antiscan.me/):
 
 ![AntiScan.me](https://github.com/reveng007/SharpGmailC2/blob/main/img/AntiScan.me.PNG)
+
+### <ins>Credits</ins>:
+
+1. Inspired by [NamedPipes](https://github.com/malcomvetter/NamedPipes) from [malcomvetter](https://www.linkedin.com/in/malcomvetter/).
+2. Much much much thanks to [@SoumyadeepBas12](https://twitter.com/SoumyadeepBas12) for helping me out with the code structure of this project! :smiley:
+
