@@ -25,9 +25,9 @@ namespace Gmail
 
         static string imapAddress = "imap.gmail.com";
 
-        static string emailFromAddress = "conducting.experiment@gmail.com"; //Change to Sender Email Address  
-        static string password = "gwvkvstrcbergnre";           		//Change to Sender Password  
-        static string emailToAddress = "conducting.experiment@gmail.com"; //Change to Receiver Email Address
+        static string emailFromAddress = "Operator@gmail.com"; //Change to Sender Email Address  
+        static string password = "password";           		//Change to Sender Password  
+        static string emailToAddress = "receiver@gmail.com"; //Change to Receiver Email Address
 
         static string subject = "Data from Client:";
 
