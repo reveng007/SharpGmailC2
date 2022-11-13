@@ -35,6 +35,14 @@ https://user-images.githubusercontent.com/61424547/201413790-aa4c9948-d909-45d0-
 
 It seems like **capa** is not able to detect the capabilties of my Client implant at all. But definitely creates suspicion, forcing the Malware Analyst to give the binary a second look.
 
+4. WireShark Packet Capture:
+
+![smtp_capture](https://github.com/reveng007/SharpGmailC2/blob/main/img/smtp_capture.PNG)
+
+We can see that the sent commands via Operator via Gmail and the informations that are exfiltrated/ sent out are all encrypted by Gmail's TLS encryption. On top of that, the ip address (marked) isn't suspicious at all, or in other words are OPSEC safe.
+
+![ip_lookup](https://github.com/reveng007/SharpGmailC2/blob/main/img/ip_lookup.PNG)
+
 ### <ins>Credits</ins>:
 
 1. Inspired by [NamedPipes](https://github.com/malcomvetter/NamedPipes) from [malcomvetter](https://www.linkedin.com/in/malcomvetter/).
