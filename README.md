@@ -47,6 +47,9 @@ We can see that the sent commands via Operator via Gmail and the informations th
 
 ![ip_lookup](https://github.com/reveng007/SharpGmailC2/blob/main/img/ip_lookup.PNG)
 
+### Honourable Mentions:
+- Got enlisted in the Golden Source of the C2 Matrix (just underneath SharpC2 by [@_RastaMouse](https://twitter.com/_RastaMouse) and [@_xpn_](https://twitter.com/_xpn_)): [google_Sheet](https://docs.google.com/spreadsheets/d/1b4mUxa6cDQuTV2BPC6aA-GR4zGZi0ooPYtBe4IgPsSc/edit#gid=0).
+
 ### <ins>Credits</ins>:
 
 1. Inspired by [NamedPipes](https://github.com/malcomvetter/NamedPipes) from [malcomvetter](https://www.linkedin.com/in/malcomvetter/).
