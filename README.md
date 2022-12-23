@@ -2,6 +2,9 @@
 
 Our Friendly Gmail will act as Server and implant will exfiltrate data via smtp and will read commands from C2 (Gmail) via imap protocol
 
+### DISCLAIMER:
+> This Project doesn't work against Windows Defender after _29th of November, 2022_. This tool is now signatured by MS Windows as `virtool:msil/ "shgmailz." a!mtb`. However, I do have plan to upgrade this project in near future, to a newer version named, ***SharpGmailC2V2***
+
 ---
 > :no_entry_sign: [Disclaimer]: Use of this project is for **Educational/ Testing purposes only**. Using it on **unauthorised machines** is **strictly forbidden**. If somebody is found to use it for **illegal/ malicious intent**, author of the repo will **not** be held responsible.
 ---
