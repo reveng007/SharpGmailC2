@@ -58,6 +58,26 @@ We can see that the sent commands via Operator via Gmail and the informations th
 
 ![ip_lookup](https://github.com/reveng007/SharpGmailC2/blob/main/img/ip_lookup.PNG)
 
+### Threat Detection
+
+SharpGmailC2 can generate following generic behaviour which can assist defenders to detect `SharpGmailC2` or other processes that leverage Gmail mail protocols for Command and Control:
+
+* Anamlous increase in DNS calls to `imap.google.com` and network connections to other Google domains e.g. `1e100.net.`
+```
+# Monitor high network connections from a particular processID
+Channel=Microsoft-Windows-Sysmon
+(EventID=3 OR EventID=22)  (3=Network Connection, 22=DNS)
+(DestinationHostname=*.1e100.net OR QueryName=*.gmail.com)
+```
+
+* Invocation of `powershell` process from a binary process (`.dll` or `.exe`)
+```
+Channel=Microsoft-Windows-Sysmon
+EventID=1
+CommandLine=powershell.exe
+(ParentImage=*.exe OR ParentImage=*.dll)
+```
+
 ### Honourable Mentions:
 - Got enlisted in the Golden Source of the C2 Matrix (just underneath SharpC2 by [@_RastaMouse](https://twitter.com/_RastaMouse) and [@_xpn_](https://twitter.com/_xpn_)): [google_Sheet](https://docs.google.com/spreadsheets/d/1b4mUxa6cDQuTV2BPC6aA-GR4zGZi0ooPYtBe4IgPsSc/edit#gid=0).
 
