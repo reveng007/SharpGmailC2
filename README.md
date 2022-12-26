@@ -9,12 +9,20 @@ Our Friendly Gmail will act as Server and implant will exfiltrate data via smtp 
 > :no_entry_sign: [Disclaimer]: Use of this project is for **Educational/ Testing purposes only**. Using it on **unauthorised machines** is **strictly forbidden**. If somebody is found to use it for **illegal/ malicious intent**, author of the repo will **not** be held responsible.
 ---
 
+### Setup
+
+When setting up the intermediate sender and recipient gmail account(s), enable the `POP Download` and `IMAP Access` by following the steps in this (link)[https://support.cloudhq.net/how-to-check-if-imap-is-enabled-in-gmail-or-google-apps-account/]
+
+Once IMAP and POP are enabled, generate an App Password by following the step in this article [here](https://support.google.com/accounts/answer/185833?hl=en). If `App Password` setting is not visible in `Security`, enable 2FA verification for the Gmail account first.
+
+When compiling the code, update the lines that set `emailToAddress`, `password` and `emailToAddress`. Value for `password` should be set to the `App Password` generated in previous step. Also, note that values for `emailToAddress`, and `emailToAddress` can be the same.
+
 ### Used:
 
 1. `EAGetMail` library from Nuget Package Manager.
 2. `Costura` and `Costura Fody` from Nuget Package Manager, in order to bundle up all the dlls altogether. This actually bulked up my implant, but for this case, I don't think that will matter much as this implant is FUD till now :).
 
-### Precausions to be taken by Operator before Using Gmail as C2:
+### Precautions to be taken by Operator before Using Gmail as C2:
 
 1. Make sure the Command sent via Gmail, is in `Unread` Mode (if not, mark as Unread) as the implant scans the `Last/latest Unread` mail and checks whether it starts with "`in:`" or not. If it does start with "`in:`", it understands that, that particular textbody is a legit command, and marks that particular mail as `Read` and this continues till the end.
 
