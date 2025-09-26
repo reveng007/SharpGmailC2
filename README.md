@@ -79,7 +79,7 @@ CommandLine=powershell.exe
 ```
 
 ### Honourable Mentions:
-- Got enlisted in the Golden Source of the C2 Matrix (just underneath SharpC2 by [@_RastaMouse](https://twitter.com/_RastaMouse) and [@_xpn_](https://twitter.com/_xpn_)): [google_Sheet](https://docs.google.com/spreadsheets/d/1b4mUxa6cDQuTV2BPC6aA-GR4zGZi0ooPYtBe4IgPsSc/edit#gid=0).
+- Got enlisted in the Golden Source of the C2 Matrix (just underneath SharpC2 by [@_RastaMouse](https://twitter.com/_RastaMouse) and [@_xpn_](https://twitter.com/_xpn_)): [google_Sheet](https://docs.google.com/spreadsheets/d/1b4mUxa6cDQuTV2BPC6aA-GR4zGZi0ooPYtBe4IgPsSc/edit#gid=0) and [lolc2 project](https://lolc2.github.io/#:~:text=Gmail).
 
 ### <ins>Credits</ins>:
 
